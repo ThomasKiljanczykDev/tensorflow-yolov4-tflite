@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -25,7 +27,8 @@ class DetectorActivity : AppCompatActivity() {
     private companion object {
         const val CAMERA_REQUEST_CODE: Int = 1
 
-        const val CAMERA_ASPECT_RATIO: Int = AspectRatio.RATIO_4_3
+        val CAMERA_ASPECT_RATIO: AspectRatioStrategy =
+            AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY
     }
 
     private val viewModel by viewModels<DetectorViewModel> { getViewModelFactory() }
@@ -101,7 +104,11 @@ class DetectorActivity : AppCompatActivity() {
 
     private fun bindPreview() {
         val preview: Preview = Preview.Builder()
-            .setTargetAspectRatio(CAMERA_ASPECT_RATIO)
+            .setResolutionSelector(
+                ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(CAMERA_ASPECT_RATIO)
+                    .build()
+            )
             .setTargetRotation(DetectorViewModel.CAMERA_ROTATION)
             .build()
 
@@ -112,7 +119,11 @@ class DetectorActivity : AppCompatActivity() {
         preview.setSurfaceProvider(binding.pvCamera.surfaceProvider)
 
         val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetAspectRatio(CAMERA_ASPECT_RATIO)
+            .setResolutionSelector(
+                ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(CAMERA_ASPECT_RATIO)
+                    .build()
+            )
             .setTargetRotation(DetectorViewModel.CAMERA_ROTATION)
             // In reality it outputs ARGB image
             .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)

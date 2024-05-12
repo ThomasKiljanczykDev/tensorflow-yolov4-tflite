@@ -22,7 +22,6 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
-@Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
 internal class YoloV4Detector(
     assetManager: AssetManager,
     private val detectionModel: DetectionModel,
