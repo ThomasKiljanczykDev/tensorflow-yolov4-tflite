@@ -4,11 +4,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
-
     defaultConfig {
         minSdkVersion 23
-        targetSdkVersion 33
+        compileSdk 34
+        targetSdkVersion 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -29,16 +28,13 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    androidResources {
-        noCompress 'tflite'
-    }
     namespace 'org.tensorflow.lite.examples.detector'
 
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.13.1'
 
-    implementation 'org.tensorflow:tensorflow-lite:2.10.0'
-    implementation 'org.tensorflow:tensorflow-lite-gpu:2.10.0'
+    implementation 'org.tensorflow:tensorflow-lite:2.16.1'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.16.1'
 }
