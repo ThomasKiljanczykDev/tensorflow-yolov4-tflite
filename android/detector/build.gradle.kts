@@ -38,4 +38,5 @@ dependencies {
 
     implementation(libs.google.litert)
     implementation(libs.google.litertGpu)
+    implementation(libs.google.litertSupport)
 }

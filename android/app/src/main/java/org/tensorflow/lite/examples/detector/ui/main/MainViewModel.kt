@@ -1,5 +1,6 @@
 package org.tensorflow.lite.examples.detector.ui.main
 
+import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -44,9 +45,9 @@ class MainViewModel : ViewModel() {
         bitmap = processBitmap(sourceBitmap, Constants.DETECTION_MODEL.inputSize)
     }
 
-    fun setUpDetector(assetManager: AssetManager) {
+    fun setUpDetector(context: Context) {
         detector = DetectorFactory.createDetector(
-            assetManager,
+            context,
             Constants.DETECTION_MODEL,
             Constants.MINIMUM_SCORE
         )

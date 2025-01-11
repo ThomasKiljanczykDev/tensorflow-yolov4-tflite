@@ -35,6 +35,7 @@ androidx-coordinatorLayout = { group = "androidx.coordinatorlayout", name = "coo
 squareup-leakCanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
 google-litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "googleLiteRt" }
 google-litertGpu = { group = "com.google.ai.edge.litert", name = "litert-gpu", version.ref = "googleLiteRt" }
+google-litertSupport = { group = "com.google.ai.edge.litert", name = "litert-support", version.ref = "googleLiteRt" }
 google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
 androidx-test-extJunit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXTestExtKotlinRunner" }

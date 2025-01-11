@@ -63,7 +63,7 @@ class DetectorActivity : AppCompatActivity() {
         requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
 
         viewModel.setUpDetectionProcessor(
-            assets,
+            applicationContext,
             resources.displayMetrics,
             binding.tovCamera,
             binding.pvCamera

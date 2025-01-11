@@ -1,7 +1,7 @@
 package org.tensorflow.lite.examples.detector.ui.detector
 
 import android.annotation.SuppressLint
-import android.content.res.AssetManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.DisplayMetrics
@@ -32,16 +32,16 @@ class DetectorViewModel : ViewModel() {
         const val CAMERA_ROTATION: Int = Surface.ROTATION_0
     }
 
-    private var detectionProcessor: DetectionProcessor? = null
+    private lateinit var detectionProcessor: DetectionProcessor
 
     fun setUpDetectionProcessor(
-        assetManager: AssetManager,
+        context: Context,
         displayMetrics: DisplayMetrics,
         trackingOverlayView: TrackingOverlayView,
         previewView: PreviewView
     ) = viewModelScope.launch(Dispatchers.Main) {
         val detector = DetectorFactory.createDetector(
-            assetManager,
+            context,
             Constants.DETECTION_MODEL,
             Constants.MINIMUM_SCORE
         )
@@ -57,7 +57,7 @@ class DetectorViewModel : ViewModel() {
         }
 
         val surfaceView: View = previewView.getChildAt(0)
-        detectionProcessor!!.initializeTrackingLayout(
+        detectionProcessor.initializeTrackingLayout(
             previewWidth = surfaceView.width,
             previewHeight = surfaceView.height,
             cropSize = detector.getDetectionModel().inputSize,
@@ -77,7 +77,7 @@ class DetectorViewModel : ViewModel() {
         Log.v(TAG, "Conversion time : $conversionTime ms")
 
 
-        val detectionTime: Long = detectionProcessor!!.processImage(bitmap)
+        val detectionTime: Long = detectionProcessor.processImage(bitmap)
         Log.v(TAG, "Detection time : $detectionTime ms")
 
         val processingTime = conversionTime + detectionTime

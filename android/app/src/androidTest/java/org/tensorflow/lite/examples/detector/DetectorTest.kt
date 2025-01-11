@@ -16,7 +16,11 @@
 package org.tensorflow.lite.examples.detector
 
 import android.content.res.AssetManager
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.RectF
 import android.util.Size
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -26,7 +30,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.tensorflow.lite.examples.detector.enums.DetectionModel
 import org.tensorflow.lite.examples.detector.utils.ImageUtils
-import java.util.*
+import java.util.Scanner
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -49,10 +53,10 @@ class DetectorTest {
 
     @Before
     fun setUp() {
-        val assetManager: AssetManager = getInstrumentation().context.resources.assets
+        val context = getInstrumentation().context
 
         detector =
-            DetectorFactory.createDetector(assetManager, DetectionModel.YOLO_V4_416_FP32, 0.0f)
+            DetectorFactory.createDetector(context, DetectionModel.YOLO_V4_416_FP32, 0.0f)
 
         val cropSize = MODEL.inputSize
         val previewWidth = IMAGE_SIZE.width
