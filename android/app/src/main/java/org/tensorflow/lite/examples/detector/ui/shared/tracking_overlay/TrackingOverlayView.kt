@@ -1,4 +1,4 @@
-package org.tensorflow.lite.examples.detector.visualization
+package org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay
 
 import android.content.Context
 import android.graphics.Canvas

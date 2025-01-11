@@ -18,9 +18,9 @@ import kotlinx.coroutines.launch
 import org.tensorflow.lite.examples.detector.DetectorFactory
 import org.tensorflow.lite.examples.detector.misc.Constants
 import org.tensorflow.lite.examples.detector.misc.DetectionProcessor
+import org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay.TrackingOverlayView
 import org.tensorflow.lite.examples.detector.utils.ImageToBitmapConverter
 import org.tensorflow.lite.examples.detector.utils.RgbaImageToBitmapConverter
-import org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
 import kotlin.system.measureTimeMillis
 
 class DetectorViewModel : ViewModel() {

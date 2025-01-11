@@ -1,12 +1,17 @@
 package org.tensorflow.lite.examples.detector.misc
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.util.Log
 import org.tensorflow.lite.examples.detector.Detector
+import org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay.MultiBoxTracker
+import org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay.TrackingOverlayView
 import org.tensorflow.lite.examples.detector.utils.ImageUtils
-import org.tensorflow.lite.examples.detector.visualization.MultiBoxTracker
-import org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
 import kotlin.system.measureTimeMillis
 
 class DetectionProcessor(
