@@ -19,8 +19,6 @@ import org.tensorflow.lite.examples.detector.DetectorFactory
 import org.tensorflow.lite.examples.detector.misc.Constants
 import org.tensorflow.lite.examples.detector.misc.DetectionProcessor
 import org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay.TrackingOverlayView
-import org.tensorflow.lite.examples.detector.utils.ImageToBitmapConverter
-import org.tensorflow.lite.examples.detector.utils.RgbaImageToBitmapConverter
 import kotlin.system.measureTimeMillis
 
 class DetectorViewModel : ViewModel() {
@@ -35,9 +33,6 @@ class DetectorViewModel : ViewModel() {
     }
 
     private var detectionProcessor: DetectionProcessor? = null
-
-    private var imageConverter: ImageToBitmapConverter = RgbaImageToBitmapConverter()
-
 
     fun setUpDetectionProcessor(
         assetManager: AssetManager,
@@ -74,7 +69,7 @@ class DetectorViewModel : ViewModel() {
     fun detectObjectsOnImage(image: ImageProxy): Long {
         var bitmap: Bitmap
         val conversionTime = measureTimeMillis {
-            bitmap = imageConverter.imageToBitmap(image.image!!)
+            bitmap = image.toBitmap()
             if (CAMERA_ROTATION % 2 == 0) {
                 bitmap = rotateImage(bitmap, 90.0f)
             }
