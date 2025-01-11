@@ -42,7 +42,7 @@
         tools:srcCompat="@drawable/kite"
         android:contentDescription="@string/activity_main_example_image_desc" />
 
-    <org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
+    <org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay.TrackingOverlayView
         android:id="@+id/tracking_overlay"
         android:layout_width="416dp"
         android:layout_height="416dp"

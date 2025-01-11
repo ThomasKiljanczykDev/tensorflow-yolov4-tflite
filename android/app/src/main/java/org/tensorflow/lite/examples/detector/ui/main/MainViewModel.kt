@@ -13,12 +13,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.tensorflow.lite.examples.detector.misc.Constants
 import org.tensorflow.lite.examples.detector.Detector
 import org.tensorflow.lite.examples.detector.DetectorFactory
+import org.tensorflow.lite.examples.detector.misc.Constants
 import org.tensorflow.lite.examples.detector.misc.DetectionProcessor
+import org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay.TrackingOverlayView
 import org.tensorflow.lite.examples.detector.utils.ImageUtils
-import org.tensorflow.lite.examples.detector.visualization.TrackingOverlayView
 
 class MainViewModel : ViewModel() {
 

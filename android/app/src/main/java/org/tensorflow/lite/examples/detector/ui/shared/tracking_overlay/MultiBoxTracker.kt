@@ -1,8 +1,12 @@
-package org.tensorflow.lite.examples.detector.visualization
+package org.tensorflow.lite.examples.detector.ui.shared.tracking_overlay
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
 import android.graphics.Paint.Cap
 import android.graphics.Paint.Join
+import android.graphics.RectF
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Pair
