@@ -1,5 +1,7 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+}
 
 android {
 
@@ -15,7 +17,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
 
@@ -30,34 +32,35 @@ android {
     lint {
         abortOnError false
     }
-    namespace 'org.tensorflow.lite.examples.detector'
+    namespace "org.tensorflow.lite.examples.detector"
 
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    implementation project(':detector')
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+    implementation project(":detector")
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+    implementation(libs.kotlinx.coroutines.android)
 
-    implementation 'androidx.camera:camera-camera2:1.3.3'
-    implementation 'androidx.camera:camera-lifecycle:1.3.3'
-    implementation 'androidx.camera:camera-view:1.3.3'
+    implementation(libs.androidx.camera2)
+    implementation(libs.androidx.cameraLifecycle)
+    implementation(libs.androidx.cameraView)
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
-    implementation 'androidx.activity:activity-ktx:1.9.0'
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.coordinatorLayout)
+    implementation(libs.androidx.constraintLayout)
+    implementation(libs.androidx.lifecycleRuntimeKtx)
+    implementation(libs.androidx.lifecycleViewModelKtx)
+    implementation(libs.androidx.activityKtx)
 
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation(libs.android.material)
+    implementation(libs.google.gson)
 
     // Uncomment if you want to enable memory leak detection
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+//    implementation(libs.squareup.leakCanary)
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'com.google.truth:truth:1.4.2'
+    androidTestImplementation(libs.androidx.test.extJunit)
+    androidTestImplementation(libs.androidx.test.extJunitKtx)
+    androidTestImplementation(libs.google.truth)
 
 }
