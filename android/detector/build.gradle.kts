@@ -36,6 +36,6 @@ android {
 dependencies {
     implementation(libs.androidx.coreKtx)
 
-    implementation(libs.tensorflow.tensorflowLite)
-    implementation(libs.tensorflow.tensorflowLiteGpu)
+    implementation(libs.google.litert)
+    implementation(libs.google.litertGpu)
 }
