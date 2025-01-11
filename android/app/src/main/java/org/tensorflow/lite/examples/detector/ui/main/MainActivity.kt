@@ -30,7 +30,7 @@ open class MainActivity : AppCompatActivity() {
         binding.imageView.setImageBitmap(viewModel.bitmap)
 
         try {
-            viewModel.setUpDetector(assets)
+            viewModel.setUpDetector(applicationContext)
         } catch (e: IOException) {
             Log.e(TAG, "Exception initializing detector!")
             Log.e(TAG, e.stackTraceToString())

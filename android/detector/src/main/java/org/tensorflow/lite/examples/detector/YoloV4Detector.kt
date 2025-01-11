@@ -1,6 +1,6 @@
 package org.tensorflow.lite.examples.detector
 
-import android.content.res.AssetManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,18 +12,19 @@ import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.examples.detector.Detector.Detection
 import org.tensorflow.lite.examples.detector.enums.DetectionModel
 import org.tensorflow.lite.gpu.GpuDelegate
-import java.io.FileInputStream
+import org.tensorflow.lite.nnapi.NnApiDelegate
+import org.tensorflow.lite.support.common.FileUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.channels.FileChannel
-import java.util.*
+import java.nio.MappedByteBuffer
+import java.util.PriorityQueue
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 
 internal class YoloV4Detector(
-    assetManager: AssetManager,
+    context: Context,
     private val detectionModel: DetectionModel,
     private val minimumScore: Float,
 ) : Detector {
@@ -39,44 +40,40 @@ internal class YoloV4Detector(
     private val inputSize: Int = detectionModel.inputSize
 
     // Config values.
-    private val labels: List<String>
-    private val interpreter: Interpreter
+    private val labels: List<String> = context.assets.open(
+        // labels filename
+        detectionModel.labelFilePath
+            .split("file:///android_asset/")
+            .toTypedArray()[1]
+    )
+        .use { it.readBytes() }
+        .decodeToString()
+        .trim()
+        .split("\n")
+        .map { it.trim() }
+    private val interpreter: Interpreter =
+        initializeInterpreter(FileUtil.loadMappedFile(context, detectionModel.modelFilename))
     private val nmsThresh = 0.6f
 
     // Pre-allocated buffers.
     private val intValues = IntArray(inputSize * inputSize)
-    private val byteBuffer: Array<ByteBuffer>
-    private val outputMap: MutableMap<Int, Array<Array<FloatArray>>> = mutableMapOf()
 
-    init {
-        val labelsFilename = detectionModel.labelFilePath
-            .split("file:///android_asset/")
-            .toTypedArray()[1]
-
-        labels = assetManager.open(labelsFilename)
-            .use { it.readBytes() }
-            .decodeToString()
-            .trim()
-            .split("\n")
-            .map { it.trim() }
-
-        interpreter = initializeInterpreter(assetManager)
-
-        val numBytesPerChannel = if (detectionModel.isQuantized) {
-            1 // Quantized (int8)
-        } else {
-            4 // Floating point (fp32)
-        }
-
-        // input size * input size * pixel count (RGB) * pixel size (int8/fp32)
-        byteBuffer = arrayOf(
-            ByteBuffer.allocateDirect(inputSize * inputSize * 3 * numBytesPerChannel)
-        )
-        byteBuffer[0].order(ByteOrder.nativeOrder())
-
-        outputMap[0] = arrayOf(Array(detectionModel.outputSize) { FloatArray(numBytesPerChannel) })
-        outputMap[1] = arrayOf(Array(detectionModel.outputSize) { FloatArray(labels.size) })
+    private val numBytesPerChannel = if (detectionModel.isQuantized) {
+        1 // Quantized (int8)
+    } else {
+        4 // Floating point (fp32)
     }
+
+    // input size * input size * pixel count (RGB) * pixel size (int8/fp32)
+    private val input: Array<ByteBuffer> = arrayOf(
+        ByteBuffer.allocateDirect(inputSize * inputSize * 3 * numBytesPerChannel)
+            .order(ByteOrder.nativeOrder())
+    )
+
+    private val output: Map<Int, Array<Array<FloatArray>>> = mutableMapOf(
+        0 to arrayOf(Array(detectionModel.outputSize) { FloatArray(numBytesPerChannel) }),
+        1 to arrayOf(Array(detectionModel.outputSize) { FloatArray(labels.size) })
+    )
 
     override fun getDetectionModel(): DetectionModel {
         return detectionModel
@@ -89,7 +86,7 @@ internal class YoloV4Detector(
         return nms(results)
     }
 
-    private fun initializeInterpreter(assetManager: AssetManager): Interpreter {
+    private fun initializeInterpreter(model: MappedByteBuffer): Interpreter {
         val options = Interpreter.Options()
         options.numThreads = NUM_THREADS
         options.setUseXNNPACK(false)
@@ -98,24 +95,18 @@ internal class YoloV4Detector(
             IS_GPU -> {
                 options.addDelegate(GpuDelegate())
             }
+
             IS_NNAPI -> {
+                options.addDelegate(NnApiDelegate())
                 options.useNNAPI = true
             }
+
             IS_XNNPACK -> {
                 options.setUseXNNPACK(true)
             }
         }
 
-        return assetManager.openFd(detectionModel.modelFilename).use { fileDescriptor ->
-            val fileInputStream = FileInputStream(fileDescriptor.fileDescriptor)
-            val fileByteBuffer = fileInputStream.channel.map(
-                FileChannel.MapMode.READ_ONLY,
-                fileDescriptor.startOffset,
-                fileDescriptor.declaredLength
-            )
-
-            return@use Interpreter(fileByteBuffer, options)
-        }
+        return Interpreter(model, options)
     }
 
     /**
@@ -135,11 +126,11 @@ internal class YoloV4Detector(
         scaledBitmap.getPixels(intValues, 0, inputSize, 0, 0, inputSize, inputSize)
         scaledBitmap.recycle()
 
-        byteBuffer[0].clear()
+        input[0].clear()
         for (pixel in intValues) {
-            byteBuffer[0].putFloat(Color.red(pixel) / 255.0f)
-            byteBuffer[0].putFloat(Color.green(pixel) / 255.0f)
-            byteBuffer[0].putFloat(Color.blue(pixel) / 255.0f)
+            input[0].putFloat(Color.red(pixel) / 255.0f)
+            input[0].putFloat(Color.green(pixel) / 255.0f)
+            input[0].putFloat(Color.blue(pixel) / 255.0f)
         }
         Log.v(TAG, "ByteBuffer conversion time : ${SystemClock.uptimeMillis() - startTime} ms")
     }
@@ -157,10 +148,10 @@ internal class YoloV4Detector(
     }
 
     private fun getDetections(imageWidth: Int, imageHeight: Int): List<Detection> {
-        interpreter.runForMultipleInputsOutputs(byteBuffer, outputMap as Map<Int, Any>)
+        interpreter.runForMultipleInputsOutputs(input, output)
 
-        val boundingBoxes = outputMap[0]!![0]
-        val outScore = outputMap[1]!![0]
+        val boundingBoxes = output[0]!![0]
+        val outScore = output[1]!![0]
 
         return outScore.zip(boundingBoxes)
             .mapIndexedNotNull { index, (classScores, boundingBoxes) ->

@@ -20,7 +20,9 @@
 
         <activity
             android:name="org.tensorflow.lite.examples.detector.ui.detector.DetectorActivity"
-            android:screenOrientation="portrait" />
+            android:parentActivityName="org.tensorflow.lite.examples.detector.ui.detector.DetectorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ObjectDetection.NoActionBar" />
 
         <activity
             android:name=".ui.main.MainActivity"

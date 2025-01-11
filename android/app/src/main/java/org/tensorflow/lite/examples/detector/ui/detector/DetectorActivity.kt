@@ -3,15 +3,20 @@ package org.tensorflow.lite.examples.detector.ui.detector
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -44,6 +49,10 @@ class DetectorActivity : AppCompatActivity() {
         binding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+
         setUpBottomSheet()
 
         @SuppressLint("SetTextI18n")
@@ -54,7 +63,7 @@ class DetectorActivity : AppCompatActivity() {
         requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
 
         viewModel.setUpDetectionProcessor(
-            assets,
+            applicationContext,
             resources.displayMetrics,
             binding.tovCamera,
             binding.pvCamera
@@ -92,12 +101,16 @@ class DetectorActivity : AppCompatActivity() {
         val sheetBehavior = BottomSheetBehavior.from(binding.bottomSheet.root)
         sheetBehavior.isHideable = false
 
-        val callback = CameraBottomSheetCallback(binding.bottomSheet.bottomSheetArrow)
-        sheetBehavior.addBottomSheetCallback(callback)
-
         val gestureLayout = binding.bottomSheet.gestureLayout
         gestureLayout.viewTreeObserver.addOnGlobalLayoutListener {
-            val height: Int = gestureLayout.measuredHeight
+            var height: Int = gestureLayout.height
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowInsets = gestureLayout.getRootWindowInsets()
+                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                height += insets.bottom
+            }
+
             sheetBehavior.peekHeight = height
         }
     }
@@ -116,7 +129,7 @@ class DetectorActivity : AppCompatActivity() {
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
-        preview.setSurfaceProvider(binding.pvCamera.surfaceProvider)
+        preview.surfaceProvider = binding.pvCamera.surfaceProvider
 
         val imageAnalysis = ImageAnalysis.Builder()
             .setResolutionSelector(
