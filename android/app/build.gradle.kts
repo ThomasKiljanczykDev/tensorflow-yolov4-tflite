@@ -6,23 +6,23 @@ plugins {
 android {
 
     defaultConfig {
-        applicationId "org.tensorflow.lite.examples"
-        minSdkVersion 23
-        compileSdk 35
-        targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        applicationId = "org.tensorflow.lite.examples"
+        minSdk = 23
+        compileSdk = 35
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
 
     buildFeatures {
-        viewBinding true
+        viewBinding = true
     }
 
     compileOptions {
@@ -30,15 +30,15 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     lint {
-        abortOnError false
+        abortOnError = false
     }
-    namespace "org.tensorflow.lite.examples.detector"
+    namespace = "org.tensorflow.lite.examples.detector"
 
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
-    implementation project(":detector")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(project(":detector"))
 
     implementation(libs.kotlinx.coroutines.android)
 

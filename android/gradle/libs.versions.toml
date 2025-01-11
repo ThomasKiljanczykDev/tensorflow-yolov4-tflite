@@ -43,3 +43,4 @@ androidx-test-extJunitKtx = { group = "androidx.test.ext", name = "junit-ktx", v
 [plugins]
 kotlin-android = { id = "org.jetbrains.kotlin.android" }
 android-application = { id = "com.android.application" }
+android-library = { id = "com.android.library" }
